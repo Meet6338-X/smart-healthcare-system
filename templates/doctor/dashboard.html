@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Dashboard - Smart Healthcare{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar doctor-sidebar">
+        <div class="sidebar-header">
+            <span class="role-badge doctor">Doctor</span>
+            <h3>{{ session.name }}</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('doctor_dashboard') }}" class="nav-item active">
+                <span class="icon">🏠</span> Dashboard
+            </a>
+            <a href="{{ url_for('doctor_appointments') }}" class="nav-item">
+                <span class="icon">📅</span> All Appointments
+            </a>
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('logout') }}" class="nav-item logout">
+                <span class="icon">🚪</span> Logout
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div>
+                <h1>Good {{ 'Morning' if 6 <= 12 else 'Afternoon' }}, Dr. {{ session.name.split()[-1] }}! 👨‍⚕️</h1>
+                <p class="subtitle">Today's Date: {{ today }}</p>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon orange">⏳</div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ pending_today }}</span>
+                    <span class="stat-label">Pending Today</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ completed_today }}</span>
+                    <span class="stat-label">Completed Today</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">👥</div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ total_patients }}</span>
+                    <span class="stat-label">Total Patients</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Appointments -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📅 Today's Appointments</h2>
+                <a href="{{ url_for('doctor_appointments') }}" class="link">View All →</a>
+            </div>
+            <div class="card-body">
+                {% if appointments %}
+                <div class="patient-queue">
+                    {% for apt in appointments %}
+                    <div class="queue-item {% if apt.status == 'IN_PROGRESS' %}in-progress{% endif %}">
+                        <div class="queue-time">
+                            <span class="time">{{ apt.time }}</span>
+                            <span class="status-badge {{ apt.status | lower }}">{{ apt.status }}</span>
+                        </div>
+                        <div class="queue-patient">
+                            <h4>{{ apt.patient_name }}</h4>
+                            <p class="patient-info">
+                                <span>📱 {{ apt.patient_phone }}</span>
+                                <span>🩸 {{ apt.patient_blood or 'N/A' }}</span>
+                                <span>{{ apt.patient_gender }}</span>
+                            </p>
+                            <p class="reason"><strong>Reason:</strong> {{ apt.reason or 'Not specified' }}</p>
+                        </div>
+                        <div class="queue-actions">
+                            {% if apt.status == 'SCHEDULED' %}
+                            <a href="{{ url_for('doctor_consultation', apt_id=apt.id) }}" class="btn btn-primary">
+                                Start Consultation
+                            </a>
+                            {% elif apt.status == 'IN_PROGRESS' %}
+                            <a href="{{ url_for('doctor_consultation', apt_id=apt.id) }}" class="btn btn-warning">
+                                Continue
+                            </a>
+                            {% else %}
+                            <span class="text-muted">Completed</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <span class="empty-icon">📅</span>
+                    <h3>No Appointments Today</h3>
+                    <p>You have no scheduled appointments for today</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

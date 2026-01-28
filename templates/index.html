@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Smart Healthcare System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">
+            Your Health,<br>
+            <span class="gradient-text">Our Priority</span>
+        </h1>
+        <p class="hero-subtitle">
+            Experience world-class healthcare with our expert doctors. 
+            Book appointments online and manage your health records seamlessly.
+        </p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline btn-lg">Login</a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="hero-card">
+            <div class="pulse-circle"></div>
+            <span class="hero-icon">🏥</span>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <h2 class="section-title">Our Services</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">👨‍⚕️</div>
+            <h3>Expert Doctors</h3>
+            <p>Consult with experienced specialists across multiple departments.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3>Easy Booking</h3>
+            <p>Book appointments online 24/7 at your convenience.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3>Medical Records</h3>
+            <p>Access your complete medical history anytime, anywhere.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💳</div>
+            <h3>Easy Payments</h3>
+            <p>Multiple payment options including UPI, cards, and insurance.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Departments Section -->
+<section class="departments">
+    <h2 class="section-title">Our Departments</h2>
+    <div class="dept-grid">
+        <div class="dept-card">
+            <span class="dept-icon">❤️</span>
+            <h4>Cardiology</h4>
+        </div>
+        <div class="dept-card">
+            <span class="dept-icon">🦴</span>
+            <h4>Orthopedics</h4>
+        </div>
+        <div class="dept-card">
+            <span class="dept-icon">🧠</span>
+            <h4>Neurology</h4>
+        </div>
+        <div class="dept-card">
+            <span class="dept-icon">👶</span>
+            <h4>Pediatrics</h4>
+        </div>
+        <div class="dept-card">
+            <span class="dept-icon">🩺</span>
+            <h4>General Medicine</h4>
+        </div>
+        <div class="dept-card">
+            <span class="dept-icon">🌡️</span>
+            <h4>Dermatology</h4>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Expert Doctors</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">10K+</span>
+            <span class="stat-label">Happy Patients</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">15+</span>
+            <span class="stat-label">Departments</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Support</span>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta">
+    <div class="cta-content">
+        <h2>Ready to Take Care of Your Health?</h2>
+        <p>Join thousands of patients who trust Smart Healthcare for their medical needs.</p>
+        <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">Register Now</a>
+    </div>
+</section>
+{% endblock %}

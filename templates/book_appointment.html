@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment - Smart Healthcare System{% endblock %}
+
+{% block content %}
+<section class="form-section">
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Book Appointment</h1>
+            <p>Schedule your visit with our expert doctors</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('book_appointment') }}" class="booking-form">
+            <!-- Department Selection -->
+            <div class="form-group-title">
+                <span class="form-group-icon">🏥</span>
+                <h3>Select Department</h3>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="department">Department <span class="required">*</span></label>
+                <select id="department" name="department" required onchange="filterDoctors()">
+                    <option value="">Select a Department</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept[0] }}">{{ dept[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Doctor Selection -->
+            <div class="form-group-title">
+                <span class="form-group-icon">👨‍⚕️</span>
+                <h3>Select Doctor</h3>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="doctor_id">Doctor <span class="required">*</span></label>
+                <select id="doctor_id" name="doctor_id" required onchange="showDoctorInfo()">
+                    <option value="">Select a Doctor</option>
+                    {% for doc in doctors %}
+                    <option value="{{ doc[0] }}" data-dept="{{ doc[4] if doc[4] else '' }}" 
+                            data-spec="{{ doc[2] }}" data-fee="{{ doc[3] }}">
+                        Dr. {{ doc[1] }} - {{ doc[2] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Doctor Info Card -->
+            <div id="doctor-info" class="doctor-info-card" style="display: none;">
+                <div class="doctor-avatar">👨‍⚕️</div>
+                <div class="doctor-details">
+                    <h4 id="doc-name">Dr. Name</h4>
+                    <p id="doc-spec" class="doc-specialty">Specialization</p>
+                    <p id="doc-fee" class="doc-fee">Consultation Fee: ₹0</p>
+                </div>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="form-group-title">
+                <span class="form-group-icon">📅</span>
+                <h3>Appointment Date & Time</h3>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointment_date">Date <span class="required">*</span></label>
+                    <input type="date" id="appointment_date" name="appointment_date" required 
+                           min="{{ today }}">
+                </div>
+                <div class="form-group">
+                    <label for="appointment_time">Time Slot <span class="required">*</span></label>
+                    <select id="appointment_time" name="appointment_time" required>
+                        <option value="">Select Time Slot</option>
+                        <option value="09:00 AM">09:00 AM</option>
+                        <option value="09:30 AM">09:30 AM</option>
+                        <option value="10:00 AM">10:00 AM</option>
+                        <option value="10:30 AM">10:30 AM</option>
+                        <option value="11:00 AM">11:00 AM</option>
+                        <option value="11:30 AM">11:30 AM</option>
+                        <option value="12:00 PM">12:00 PM</option>
+                        <option value="02:00 PM">02:00 PM</option>
+                        <option value="02:30 PM">02:30 PM</option>
+                        <option value="03:00 PM">03:00 PM</option>
+                        <option value="03:30 PM">03:30 PM</option>
+                        <option value="04:00 PM">04:00 PM</option>
+                        <option value="04:30 PM">04:30 PM</option>
+                        <option value="05:00 PM">05:00 PM</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Reason for Visit -->
+            <div class="form-group-title">
+                <span class="form-group-icon">📝</span>
+                <h3>Reason for Visit</h3>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="reason">Describe your symptoms or reason</label>
+                <textarea id="reason" name="reason" rows="4" 
+                          placeholder="Please describe your symptoms or reason for the appointment..."></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg btn-block">
+                    <span>Book Appointment</span>
+                    <span class="btn-icon">📅</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Set minimum date to today
+document.getElementById('appointment_date').min = new Date().toISOString().split('T')[0];
+
+function filterDoctors() {
+    const deptId = document.getElementById('department').value;
+    const doctorSelect = document.getElementById('doctor_id');
+    const options = doctorSelect.querySelectorAll('option');
+    
+    options.forEach(option => {
+        if (option.value === '') {
+            option.style.display = 'block';
+        } else if (deptId === '' || option.dataset.dept === deptId) {
+            option.style.display = 'block';
+        } else {
+            option.style.display = 'none';
+        }
+    });
+    
+    doctorSelect.value = '';
+    document.getElementById('doctor-info').style.display = 'none';
+}
+
+function showDoctorInfo() {
+    const doctorSelect = document.getElementById('doctor_id');
+    const selectedOption = doctorSelect.options[doctorSelect.selectedIndex];
+    const infoCard = document.getElementById('doctor-info');
+    
+    if (doctorSelect.value) {
+        document.getElementById('doc-name').textContent = 'Dr. ' + selectedOption.text.split(' - ')[0].replace('Dr. ', '');
+        document.getElementById('doc-spec').textContent = selectedOption.dataset.spec;
+        document.getElementById('doc-fee').textContent = 'Consultation Fee: ₹' + selectedOption.dataset.fee;
+        infoCard.style.display = 'flex';
+    } else {
+        infoCard.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

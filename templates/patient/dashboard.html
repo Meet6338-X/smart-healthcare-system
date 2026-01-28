@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Dashboard - Smart Healthcare{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <span class="role-badge patient">Patient</span>
+            <h3>{{ session.name }}</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('patient_dashboard') }}" class="nav-item active">
+                <span class="icon">🏠</span> Dashboard
+            </a>
+            <a href="{{ url_for('patient_appointments') }}" class="nav-item">
+                <span class="icon">📅</span> My Appointments
+            </a>
+            <a href="{{ url_for('book_appointment') }}" class="nav-item">
+                <span class="icon">➕</span> Book Appointment
+            </a>
+            <a href="{{ url_for('patient_records') }}" class="nav-item">
+                <span class="icon">📋</span> Medical Records
+            </a>
+            <a href="{{ url_for('patient_bills') }}" class="nav-item">
+                <span class="icon">💳</span> Bills & Payments
+            </a>
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('logout') }}" class="nav-item logout">
+                <span class="icon">🚪</span> Logout
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div>
+                <h1>Welcome back, {{ session.name.split()[0] }}! 👋</h1>
+                <p class="subtitle">Here's your health overview</p>
+            </div>
+            <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">
+                <span>➕</span> Book Appointment
+            </a>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">📅</div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ upcoming_count }}</span>
+                    <span class="stat-label">Upcoming</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ completed_count }}</span>
+                    <span class="stat-label">Completed</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">📋</div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ records_count }}</span>
+                    <span class="stat-label">Records</span>
+                </div>
+            </div>
+            <div class="stat-card {% if pending_amount > 0 %}highlight-warning{% endif %}">
+                <div class="stat-icon orange">💰</div>
+                <div class="stat-info">
+                    <span class="stat-value">₹{{ pending_amount }}</span>
+                    <span class="stat-label">Pending Bills</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Appointments -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Recent Appointments</h2>
+                <a href="{{ url_for('patient_appointments') }}" class="link">View All →</a>
+            </div>
+            <div class="card-body">
+                {% if appointments %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th>Specialization</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for apt in appointments %}
+                        <tr>
+                            <td><strong>{{ apt.doctor_name }}</strong></td>
+                            <td>{{ apt.specialization }}</td>
+                            <td>{{ apt.date }}</td>
+                            <td>{{ apt.time }}</td>
+                            <td>
+                                <span class="status-badge {{ apt.status | lower }}">
+                                    {{ apt.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if apt.status == 'SCHEDULED' %}
+                                <form action="{{ url_for('cancel_appointment', apt_id=apt.id) }}" method="POST" style="display:inline">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Cancel this appointment?')">Cancel</button>
+                                </form>
+                                {% elif apt.status == 'COMPLETED' %}
+                                <a href="{{ url_for('patient_records') }}" class="btn btn-sm btn-outline">View Record</a>
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <span class="empty-icon">📅</span>
+                    <h3>No Appointments Yet</h3>
+                    <p>Book your first appointment to get started</p>
+                    <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">Book Now</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}All Appointments - Doctor - Smart Healthcare{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar doctor-sidebar">
+        <div class="sidebar-header">
+            <span class="role-badge doctor">Doctor</span>
+            <h3>{{ session.name }}</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('doctor_dashboard') }}" class="nav-item"><span class="icon">🏠</span> Dashboard</a>
+            <a href="{{ url_for('doctor_appointments') }}" class="nav-item active"><span class="icon">📅</span> All Appointments</a>
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('logout') }}" class="nav-item logout"><span class="icon">🚪</span> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div>
+                <h1>All Appointments</h1>
+                <p class="subtitle">View your complete appointment history</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                {% if appointments %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Patient</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for apt in appointments %}
+                        <tr>
+                            <td>#{{ apt.id }}</td>
+                            <td>
+                                <strong>{{ apt.patient_name }}</strong>
+                                <br><small>📱 {{ apt.patient_phone }}</small>
+                            </td>
+                            <td>{{ apt.date }}</td>
+                            <td>{{ apt.time }}</td>
+                            <td>{{ apt.reason[:40] }}{% if apt.reason|length > 40 %}...{% endif %}</td>
+                            <td>
+                                <span class="status-badge {{ apt.status | lower }}">{{ apt.status }}</span>
+                            </td>
+                            <td>
+                                {% if apt.status == 'SCHEDULED' %}
+                                <a href="{{ url_for('doctor_consultation', apt_id=apt.id) }}" class="btn btn-sm btn-primary">Start</a>
+                                {% elif apt.status == 'IN_PROGRESS' %}
+                                <a href="{{ url_for('doctor_consultation', apt_id=apt.id) }}" class="btn btn-sm btn-warning">Continue</a>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <span class="empty-icon">📅</span>
+                    <h3>No Appointments</h3>
+                    <p>You don't have any appointments yet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

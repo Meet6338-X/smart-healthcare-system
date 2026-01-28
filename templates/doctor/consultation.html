@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Consultation - Smart Healthcare{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar doctor-sidebar">
+        <div class="sidebar-header">
+            <span class="role-badge doctor">Doctor</span>
+            <h3>{{ session.name }}</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('doctor_dashboard') }}" class="nav-item"><span class="icon">🏠</span> Dashboard</a>
+            <a href="{{ url_for('doctor_appointments') }}" class="nav-item"><span class="icon">📅</span> All Appointments</a>
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('logout') }}" class="nav-item logout"><span class="icon">🚪</span> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div>
+                <h1>🩺 Patient Consultation</h1>
+                <p class="subtitle">Appointment #{{ apt_id }}</p>
+            </div>
+            <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-outline">← Back to Dashboard</a>
+        </div>
+
+        <!-- Patient Info Card -->
+        <div class="card patient-info-card">
+            <div class="card-body">
+                <div class="patient-header">
+                    <div class="patient-avatar">👤</div>
+                    <div class="patient-details">
+                        <h2>{{ patient.name }}</h2>
+                        <div class="patient-meta">
+                            <span>📱 {{ patient.phone }}</span>
+                            <span>🎂 {{ patient.dob }}</span>
+                            <span>{{ patient.gender }}</span>
+                            <span>🩸 {{ patient.blood_group or 'N/A' }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="visit-reason">
+                    <strong>Reason for Visit:</strong>
+                    <p>{{ appointment.reason or 'Not specified' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultation Form -->
+        <form method="POST" action="{{ url_for('doctor_consultation', apt_id=apt_id) }}" class="consultation-form">
+            <div class="card">
+                <div class="card-header">
+                    <h3>📋 Diagnosis & Notes</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="symptoms">Symptoms Observed <span class="required">*</span></label>
+                        <textarea id="symptoms" name="symptoms" rows="3" required placeholder="Describe the symptoms observed during examination..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="diagnosis">Diagnosis <span class="required">*</span></label>
+                        <textarea id="diagnosis" name="diagnosis" rows="3" required placeholder="Enter your diagnosis..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Additional Notes (for patient)</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Any instructions or notes for the patient..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prescriptions -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>💊 Prescriptions</h3>
+                    <button type="button" class="btn btn-sm btn-outline" onclick="addPrescription()">+ Add Medicine</button>
+                </div>
+                <div class="card-body">
+                    <div id="prescriptions-container">
+                        <div class="prescription-row">
+                            <div class="form-group">
+                                <label>Medicine Name</label>
+                                <input type="text" name="medicine_name[]" placeholder="e.g., Paracetamol">
+                            </div>
+                            <div class="form-group">
+                                <label>Dosage</label>
+                                <input type="text" name="dosage[]" placeholder="e.g., 500mg">
+                            </div>
+                            <div class="form-group">
+                                <label>Frequency</label>
+                                <select name="frequency[]">
+                                    <option value="">Select</option>
+                                    <option value="Once daily">Once daily</option>
+                                    <option value="Twice daily">Twice daily</option>
+                                    <option value="Three times daily">Three times daily</option>
+                                    <option value="Every 6 hours">Every 6 hours</option>
+                                    <option value="Before meals">Before meals</option>
+                                    <option value="After meals">After meals</option>
+                                    <option value="At bedtime">At bedtime</option>
+                                    <option value="As needed">As needed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Duration</label>
+                                <input type="text" name="duration[]" placeholder="e.g., 5 days">
+                            </div>
+                            <button type="button" class="btn btn-sm btn-danger remove-btn" onclick="this.parentElement.remove()">×</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="form-actions">
+                <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary btn-lg">
+                    ✅ Complete Consultation & Generate Bill
+                </button>
+            </div>
+        </form>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function addPrescription() {
+    const container = document.getElementById('prescriptions-container');
+    const html = `
+        <div class="prescription-row">
+            <div class="form-group">
+                <input type="text" name="medicine_name[]" placeholder="Medicine name">
+            </div>
+            <div class="form-group">
+                <input type="text" name="dosage[]" placeholder="Dosage">
+            </div>
+            <div class="form-group">
+                <select name="frequency[]">
+                    <option value="">Select</option>
+                    <option value="Once daily">Once daily</option>
+                    <option value="Twice daily">Twice daily</option>
+                    <option value="Three times daily">Three times daily</option>
+                    <option value="Every 6 hours">Every 6 hours</option>
+                    <option value="As needed">As needed</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" name="duration[]" placeholder="Duration">
+            </div>
+            <button type="button" class="btn btn-sm btn-danger remove-btn" onclick="this.parentElement.remove()">×</button>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', html);
+}
+</script>
+{% endblock %}

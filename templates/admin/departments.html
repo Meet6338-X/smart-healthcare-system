@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Departments - Admin - Smart Healthcare{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar admin-sidebar">
+        <div class="sidebar-header">
+            <span class="role-badge admin">Admin</span>
+            <h3>{{ session.name }}</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-item"><span class="icon">🏠</span> Dashboard</a>
+            <a href="{{ url_for('admin_doctors') }}" class="nav-item"><span class="icon">👨‍⚕️</span> Doctors</a>
+            <a href="{{ url_for('admin_departments') }}" class="nav-item active"><span class="icon">🏥</span> Departments</a>
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('logout') }}" class="nav-item logout"><span class="icon">🚪</span> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div>
+                <h1>Manage Departments</h1>
+                <p class="subtitle">Hospital departments and locations</p>
+            </div>
+            <button class="btn btn-primary" onclick="document.getElementById('add-dept-modal').style.display='flex'">
+                ➕ Add Department
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Department Name</th>
+                            <th>Description</th>
+                            <th>Location</th>
+                            <th>Doctors</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dept in departments %}
+                        <tr>
+                            <td>#{{ dept.id }}</td>
+                            <td><strong>{{ dept.name }}</strong></td>
+                            <td>{{ dept.description }}</td>
+                            <td>{{ dept.location }}</td>
+                            <td><span class="badge">{{ dept.doctor_count }} doctors</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add Department Modal -->
+<div id="add-dept-modal" class="modal" style="display:none">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add New Department</h2>
+            <button class="modal-close" onclick="document.getElementById('add-dept-modal').style.display='none'">&times;</button>
+        </div>
+        <form method="POST" action="{{ url_for('admin_add_department') }}">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Department Name <span class="required">*</span></label>
+                    <input type="text" name="name" required placeholder="e.g., Cardiology">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" placeholder="Brief description of the department"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Location <span class="required">*</span></label>
+                    <input type="text" name="location" required placeholder="e.g., Building A, Floor 2">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('add-dept-modal').style.display='none'">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Department</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

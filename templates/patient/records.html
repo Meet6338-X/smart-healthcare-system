@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Medical Records - Smart Healthcare{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <span class="role-badge patient">Patient</span>
+            <h3>{{ session.name }}</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('patient_dashboard') }}" class="nav-item"><span class="icon">🏠</span> Dashboard</a>
+            <a href="{{ url_for('patient_appointments') }}" class="nav-item"><span class="icon">📅</span> My Appointments</a>
+            <a href="{{ url_for('book_appointment') }}" class="nav-item"><span class="icon">➕</span> Book Appointment</a>
+            <a href="{{ url_for('patient_records') }}" class="nav-item active"><span class="icon">📋</span> Medical Records</a>
+            <a href="{{ url_for('patient_bills') }}" class="nav-item"><span class="icon">💳</span> Bills & Payments</a>
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('logout') }}" class="nav-item logout"><span class="icon">🚪</span> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div>
+                <h1>Medical Records</h1>
+                <p class="subtitle">Your complete medical history</p>
+            </div>
+        </div>
+
+        {% if records %}
+        <div class="records-list">
+            {% for record in records %}
+            <div class="card record-card">
+                <div class="card-header">
+                    <div class="record-meta">
+                        <span class="record-date">📅 {{ record.date }}</span>
+                        <span class="record-doctor">👨‍⚕️ {{ record.doctor_name }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="record-section">
+                        <h4>Diagnosis</h4>
+                        <p>{{ record.diagnosis }}</p>
+                    </div>
+                    {% if record.symptoms %}
+                    <div class="record-section">
+                        <h4>Symptoms</h4>
+                        <p>{{ record.symptoms }}</p>
+                    </div>
+                    {% endif %}
+                    {% if record.notes %}
+                    <div class="record-section">
+                        <h4>Doctor's Notes</h4>
+                        <p>{{ record.notes }}</p>
+                    </div>
+                    {% endif %}
+                    {% if record.prescriptions %}
+                    <div class="record-section">
+                        <h4>Prescriptions</h4>
+                        <table class="prescription-table">
+                            <thead>
+                                <tr><th>Medicine</th><th>Dosage</th><th>Frequency</th><th>Duration</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for presc in record.prescriptions %}
+                                <tr>
+                                    <td><strong>{{ presc.medicine }}</strong></td>
+                                    <td>{{ presc.dosage }}</td>
+                                    <td>{{ presc.frequency }}</td>
+                                    <td>{{ presc.duration }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card">
+            <div class="card-body">
+                <div class="empty-state">
+                    <span class="empty-icon">📋</span>
+                    <h3>No Medical Records</h3>
+                    <p>Your medical records will appear here after consultations</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}

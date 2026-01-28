@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Bills & Payments - Smart Healthcare{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <span class="role-badge patient">Patient</span>
+            <h3>{{ session.name }}</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('patient_dashboard') }}" class="nav-item"><span class="icon">🏠</span> Dashboard</a>
+            <a href="{{ url_for('patient_appointments') }}" class="nav-item"><span class="icon">📅</span> My Appointments</a>
+            <a href="{{ url_for('book_appointment') }}" class="nav-item"><span class="icon">➕</span> Book Appointment</a>
+            <a href="{{ url_for('patient_records') }}" class="nav-item"><span class="icon">📋</span> Medical Records</a>
+            <a href="{{ url_for('patient_bills') }}" class="nav-item active"><span class="icon">💳</span> Bills & Payments</a>
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('logout') }}" class="nav-item logout"><span class="icon">🚪</span> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="dashboard-header">
+            <div>
+                <h1>Bills & Payments</h1>
+                <p class="subtitle">Manage your healthcare bills</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                {% if bills %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Bill ID</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bill in bills %}
+                        <tr>
+                            <td>#{{ bill.id }}</td>
+                            <td>{{ bill.date }}</td>
+                            <td>{{ bill.description }}</td>
+                            <td><strong>₹{{ bill.amount }}</strong></td>
+                            <td>
+                                <span class="status-badge {{ bill.status | lower }}">
+                                    {{ bill.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if bill.status == 'PENDING' %}
+                                <button class="btn btn-sm btn-primary" onclick="alert('Payment gateway integration required')">Pay Now</button>
+                                {% else %}
+                                <button class="btn btn-sm btn-outline">Download</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <span class="empty-icon">💳</span>
+                    <h3>No Bills</h3>
+                    <p>You don't have any bills yet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
