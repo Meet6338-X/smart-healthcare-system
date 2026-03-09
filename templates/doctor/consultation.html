@@ -48,6 +48,66 @@
             </div>
         </div>
 
+        <!-- Patient History Card -->
+        {% if patient_history %}
+        <div class="card patient-history-card">
+            <div class="card-header">
+                <h3>📜 Patient History</h3>
+                <span class="history-count">{{ patient_history|length }} previous visit(s)</span>
+            </div>
+            <div class="card-body">
+                {% for history in patient_history %}
+                <div class="history-item">
+                    <div class="history-header">
+                        <div class="history-date">
+                            <span class="date-badge">{{ history.date }}</span>
+                        </div>
+                        <div class="history-doctor">
+                            <strong>{{ history.doctor_name }}</strong>
+                            <span class="specialization">{{ history.specialization }}</span>
+                        </div>
+                    </div>
+                    <div class="history-details">
+                        {% if history.symptoms %}
+                        <div class="history-section">
+                            <label>Symptoms:</label>
+                            <p>{{ history.symptoms }}</p>
+                        </div>
+                        {% endif %}
+                        {% if history.diagnosis %}
+                        <div class="history-section">
+                            <label>Diagnosis:</label>
+                            <p>{{ history.diagnosis }}</p>
+                        </div>
+                        {% endif %}
+                        {% if history.notes %}
+                        <div class="history-section">
+                            <label>Notes:</label>
+                            <p>{{ history.notes }}</p>
+                        </div>
+                        {% endif %}
+                        {% if history.prescriptions %}
+                        <div class="history-section prescriptions-list">
+                            <label>Prescriptions:</label>
+                            <ul>
+                            {% for presc in history.prescriptions %}
+                                <li>
+                                    <strong>{{ presc.medicine }}</strong>
+                                    {% if presc.dosage %}- {{ presc.dosage }}{% endif %}
+                                    {% if presc.frequency %}- {{ presc.frequency }}{% endif %}
+                                    {% if presc.duration %}- {{ presc.duration }}{% endif %}
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Consultation Form -->
         <form method="POST" action="{{ url_for('doctor_consultation', apt_id=apt_id) }}" class="consultation-form">
             <div class="card">

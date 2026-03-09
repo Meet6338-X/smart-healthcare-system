@@ -1393,6 +1393,118 @@ h4 { font-size: 1.125rem; }
     border-top: 1px solid var(--border);
 }
 
+/* Patient History Card */
+.patient-history-card {
+    margin-bottom: var(--spacing-lg);
+    border-left: 4px solid var(--info);
+}
+
+.patient-history-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-count {
+    background: var(--info);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.history-item {
+    padding: var(--spacing-lg);
+    background: var(--surface-hover);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing-md);
+}
+
+.history-item:last-child {
+    margin-bottom: 0;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border);
+}
+
+.date-badge {
+    background: var(--primary);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.history-doctor {
+    text-align: right;
+}
+
+.history-doctor strong {
+    display: block;
+    color: var(--text);
+}
+
+.history-doctor .specialization {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.history-details {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.history-section {
+    background: var(--surface);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+}
+
+.history-section label {
+    display: block;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-light);
+}
+
+.history-section p {
+    margin: 0;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.prescriptions-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.prescriptions-list li {
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+
+.prescriptions-list li:last-child {
+    border-bottom: none;
+}
+
+.prescriptions-list li strong {
+    color: var(--primary);
+}
+
 .prescription-row {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr auto;

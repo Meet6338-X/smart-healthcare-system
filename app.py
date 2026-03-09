@@ -59,16 +59,124 @@ PATIENTS = {
 }
 
 # Appointments
-APPOINTMENTS = {}
-appointment_counter = 1
+APPOINTMENTS = {
+    1: {
+        'patient_id': 1,
+        'doctor_id': 1,
+        'date': '2026-03-01',
+        'time': '10:00',
+        'status': 'COMPLETED',
+        'reason': 'Cold and fever',
+        'created_at': '2026-03-01T09:00:00'
+    },
+    2: {
+        'patient_id': 1,
+        'doctor_id': 2,
+        'date': '2026-02-15',
+        'time': '14:00',
+        'status': 'COMPLETED',
+        'reason': 'Ankle pain after cricket match',
+        'created_at': '2026-02-15T13:00:00'
+    },
+    3: {
+        'patient_id': 1,
+        'doctor_id': 1,
+        'date': '2026-01-20',
+        'time': '11:00',
+        'status': 'COMPLETED',
+        'reason': 'Regular BP checkup',
+        'created_at': '2026-01-20T10:00:00'
+    },
+    4: {
+        'patient_id': 1,
+        'doctor_id': 1,
+        'date': '2026-03-09',
+        'time': '09:00',
+        'status': 'SCHEDULED',
+        'reason': 'Follow-up consultation',
+        'created_at': '2026-03-08T15:00:00'
+    }
+}
+appointment_counter = 5
 
 # Medical Records
-MEDICAL_RECORDS = {}
-record_counter = 1
+MEDICAL_RECORDS = {
+    1: {
+        'appointment_id': 1,
+        'patient_id': 1,
+        'doctor_id': 1,
+        'date': '2026-03-01',
+        'diagnosis': 'Common Cold - Viral infection',
+        'symptoms': 'Runny nose, sore throat, mild fever',
+        'notes': 'Rest and stay hydrated. Take paracetamol for fever.'
+    },
+    2: {
+        'appointment_id': 2,
+        'patient_id': 1,
+        'doctor_id': 2,
+        'date': '2026-02-15',
+        'diagnosis': 'Mild Sprain - Left Ankle',
+        'symptoms': 'Pain and swelling in left ankle after playing cricket',
+        'notes': 'Apply ice pack, use ankle support. Avoid heavy activities.'
+    },
+    3: {
+        'appointment_id': 3,
+        'patient_id': 1,
+        'doctor_id': 1,
+        'date': '2026-01-20',
+        'diagnosis': 'Hypertension - Stage 1',
+        'symptoms': 'High blood pressure readings, occasional headaches',
+        'notes': 'Monitor BP daily. Reduce salt intake. Follow up in 1 month.'
+    }
+}
+record_counter = 4
 
 # Prescriptions
-PRESCRIPTIONS = {}
-prescription_counter = 1
+PRESCRIPTIONS = {
+    1: {
+        'record_id': 1,
+        'medicine': 'Paracetamol 500mg',
+        'dosage': '500mg',
+        'frequency': 'Three times daily',
+        'duration': '3 days'
+    },
+    2: {
+        'record_id': 1,
+        'medicine': 'Cetirizine 10mg',
+        'dosage': '10mg',
+        'frequency': 'Once daily',
+        'duration': '5 days'
+    },
+    3: {
+        'record_id': 2,
+        'medicine': 'Ibuprofen 400mg',
+        'dosage': '400mg',
+        'frequency': 'Twice daily',
+        'duration': '7 days'
+    },
+    4: {
+        'record_id': 2,
+        'medicine': 'Volini Spray',
+        'dosage': 'Topical',
+        'frequency': 'As needed',
+        'duration': '10 days'
+    },
+    5: {
+        'record_id': 3,
+        'medicine': 'Amlodipine 5mg',
+        'dosage': '5mg',
+        'frequency': 'Once daily',
+        'duration': '30 days'
+    },
+    6: {
+        'record_id': 3,
+        'medicine': 'Aspirin 75mg',
+        'dosage': '75mg',
+        'frequency': 'Once daily',
+        'duration': '30 days'
+    }
+}
+prescription_counter = 7
 
 # Bills
 BILLS = {}
@@ -521,14 +629,37 @@ def doctor_consultation(apt_id):
     if request.method == 'GET':
         # Mark as in progress
         apt['status'] = 'IN_PROGRESS'
+        
+        # Fetch patient's previous medical history
+        patient_history = []
+        for rec_id, rec in MEDICAL_RECORDS.items():
+            if rec['patient_id'] == apt['patient_id'] and rec['appointment_id'] != apt_id:
+                doctor = DOCTORS.get(rec['doctor_id'], {})
+                # Get prescriptions for this record
+                presc = [p for p in PRESCRIPTIONS.values() if p['record_id'] == rec_id]
+                patient_history.append({
+                    'id': rec_id,
+                    'date': rec['date'],
+                    'doctor_name': doctor.get('name', 'Unknown'),
+                    'specialization': doctor.get('specialization', ''),
+                    'diagnosis': rec.get('diagnosis', ''),
+                    'symptoms': rec.get('symptoms', ''),
+                    'notes': rec.get('notes', ''),
+                    'prescriptions': presc
+                })
+        
+        # Sort by date (most recent first)
+        patient_history.sort(key=lambda x: x['date'], reverse=True)
+        
         return render_template('doctor/consultation.html',
             appointment=apt,
             apt_id=apt_id,
-            patient=patient
+            patient=patient,
+            patient_history=patient_history
         )
     
     # Process consultation form
-    global MEDICAL_RECORDS, PRESCRIPTIONS, BILLS, record_counter, prescription_counter, bill_counter
+    global record_counter, prescription_counter, bill_counter
     
     diagnosis = request.form.get('diagnosis', '')
     symptoms = request.form.get('symptoms', '')
